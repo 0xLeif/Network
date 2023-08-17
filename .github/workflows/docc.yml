@@ -26,7 +26,6 @@ jobs:
             -destination 'generic/platform=iOS';
           $(xcrun --find docc) process-archive \
             transform-for-static-hosting /tmp/docbuild/Build/Products/Debug-iphoneos/Network.doccarchive \
-            --hosting-base-path Network \
             --output-path docs;
           echo "<script>window.location.href +=
           \"/documentation/network\"</script>" > docs/index.html;
