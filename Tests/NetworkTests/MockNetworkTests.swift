@@ -2,90 +2,73 @@ import XCTest
 @testable import Network
 
 final class MockNetworkTests: XCTestCase {
-    class StringMockNetwork: MockNetwork {
-        func data(for method: HTTPRequestMethod) -> DataResponse {
-            DataResponse(data: "Hello, \(method.rawValue)".data(using: .utf8), response: URLResponse())
-        }
-
-        override func get(
-            url: URL,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .GET)
-        }
-
-        override func head(
-            url: URL,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .HEAD)
-        }
-
-        override func connect(
-            url: URL,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .CONNECT)
-        }
-
-        override func options(
-            url: URL,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .OPTIONS)
-        }
-
-        override func trace(
-            url: URL,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .TRACE)
-        }
-
-        override func post(
-            url: URL,
-            body: Data?,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .POST)
-        }
-
-        override func put(
-            url: URL,
-            body: Data?,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .PUT)
-        }
-
-        override func patch(
-            url: URL,
-            body: Data?,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .PATCH)
-        }
-
-        override func delete(
-            url: URL,
-            body: Data?,
-            headerFields: [String: String] = [:]
-        ) async throws -> DataResponse {
-            data(for: .DELETE)
-        }
-
-    }
-
-    let network: StringMockNetwork = StringMockNetwork()
-
     var url: URL {
         get throws {
             try XCTUnwrap(URL(string: Self.self.description()))
         }
     }
 
+    func testRequest() async throws {
+        let expectedString = "Hello, world!"
+        let network = MockNetwork(
+            responseData: expectedString.data(using: .utf8),
+            response: nil
+        )
+
+        let dataResponse = try await network.request(for: try url, method: .GET, headerFields: [:], body: nil)
+        let data = try XCTUnwrap(dataResponse.data)
+        let string = String(data: data, encoding: .utf8)
+
+        XCTAssertEqual(string, expectedString)
+    }
+
+    func testAPI() async throws {
+        enum ExampleEndpoint: Endpoint {
+            static var url: URL { URL(string: "example")! }
+
+            case hello
+
+            var method: HTTPRequestMethod {
+                switch self {
+                case .hello:    return .GET
+                }
+            }
+
+            var path: String {
+                switch self {
+                case .hello:    return "hello"
+                }
+            }
+
+            var headers: [String: String] {
+                switch self {
+                case .hello:
+                    return [
+                        "id": "hello"
+                    ]
+                }
+            }
+
+            var body: Data? {
+                switch self {
+                case .hello:    return "hello".data(using: .utf8)
+                }
+            }
+        }
+
+        let api = MockAPI<ExampleEndpoint>()
+        let expectedString = "hello"
+
+        let dataResponse = try await api.request(.hello)
+        let data = try XCTUnwrap(dataResponse.data)
+        let string = String(data: data, encoding: .utf8)
+
+        XCTAssertEqual(string, expectedString)
+    }
+
     func testGet() async throws {
         let expectedString = "Hello, GET"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.get(url: url)
         let data = try XCTUnwrap(dataResponse.data)
@@ -96,6 +79,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testHead() async throws {
         let expectedString = "Hello, HEAD"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.head(url: url)
         let data = try XCTUnwrap(dataResponse.data)
@@ -106,6 +90,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testPost() async throws {
         let expectedString = "Hello, POST"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.post(url: url, body: nil)
         let data = try XCTUnwrap(dataResponse.data)
@@ -116,6 +101,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testPut() async throws {
         let expectedString = "Hello, PUT"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.put(url: url, body: nil)
         let data = try XCTUnwrap(dataResponse.data)
@@ -126,6 +112,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testDelete() async throws {
         let expectedString = "Hello, DELETE"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.delete(url: url, body: nil)
         let data = try XCTUnwrap(dataResponse.data)
@@ -136,6 +123,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testConnect() async throws {
         let expectedString = "Hello, CONNECT"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.connect(url: url)
         let data = try XCTUnwrap(dataResponse.data)
@@ -146,6 +134,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testOptions() async throws {
         let expectedString = "Hello, OPTIONS"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.options(url: url)
         let data = try XCTUnwrap(dataResponse.data)
@@ -156,6 +145,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testTrace() async throws {
         let expectedString = "Hello, TRACE"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.trace(url: url)
         let data = try XCTUnwrap(dataResponse.data)
@@ -166,6 +156,7 @@ final class MockNetworkTests: XCTestCase {
 
     func testPatch() async throws {
         let expectedString = "Hello, PATCH"
+        let network = MockNetwork(responseData: expectedString.data(using: .utf8), response: nil)
 
         let dataResponse = try await network.patch(url: url, body: nil)
         let data = try XCTUnwrap(dataResponse.data)

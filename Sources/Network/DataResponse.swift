@@ -21,7 +21,6 @@ public struct DataResponse {
     /// - Parameters:
     ///   - tuple: A tuple containing data as the first element and URL response as the second element.
     public init(_ tuple: (Data?, URLResponse?)) {
-        self.data = tuple.0
-        self.response = tuple.1
+        self.init(data: tuple.0, response: tuple.1)
     }
 }
