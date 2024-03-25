@@ -2,7 +2,7 @@ import Foundation
 
 /// A protocol defining networking methods for making HTTP requests.
 public protocol Networking {
-    /// Sends an HTTP  request to the specified URL.
+    /// Sends an HTTP request to the specified URL.
     /// - Parameters:
     ///   - url: The URL to which the request will be sent.
     ///   - method: The HTTP method to be used.

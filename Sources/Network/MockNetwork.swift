@@ -13,6 +13,13 @@ open class MockNetwork: Network {
         self.response = response
     }
 
+    /// Sends an Mock HTTP request.
+    /// - Parameters:
+    ///   - url: The URL to which the request will be sent.
+    ///   - method: The HTTP method to be used.
+    ///   - headerFields: Header fields to include in the request.
+    ///   - body: Optional body to be including with the request.
+    /// - Returns: A `DataResponse` object containing the response data and URL response.
     public override func request(
         for url: URL,
         method: HTTPRequestMethod,
