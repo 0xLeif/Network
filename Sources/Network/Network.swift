@@ -4,6 +4,23 @@ import Foundation
 open class Network: Networking {
     public init() { }
 
+    open func request(
+        for url: URL,
+        method : HTTPRequestMethod,
+        headerFields: [String: String],
+        body: Data?
+    ) async throws -> DataResponse {
+        var request = URLRequest(url: url)
+
+        request.httpMethod = method.rawValue
+        request.allHTTPHeaderFields = headerFields
+        request.httpBody = body
+
+        return DataResponse(
+            try await URLSession.shared.data(for: request)
+        )
+    }
+
     open func `get`(
         url: URL,
         headerFields: [String: String] = [
@@ -11,14 +28,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        DataResponse(
-            try await URLSession.shared.data(
-                for: request(
-                    for: url,
-                    method: .GET,
-                    headerFields: headerFields
-                )
-            )
+        try await request(
+            for: url,
+            method: .GET,
+            headerFields: headerFields,
+            body: nil
         )
     }
 
@@ -29,14 +43,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        DataResponse(
-            try await URLSession.shared.data(
-                for: request(
-                    for: url,
-                    method: .HEAD,
-                    headerFields: headerFields
-                )
-            )
+        try await request(
+            for: url,
+            method: .HEAD,
+            headerFields: headerFields,
+            body: nil
         )
     }
 
@@ -47,14 +58,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        DataResponse(
-            try await URLSession.shared.data(
-                for: request(
-                    for: url,
-                    method: .CONNECT,
-                    headerFields: headerFields
-                )
-            )
+        try await request(
+            for: url,
+            method: .CONNECT,
+            headerFields: headerFields,
+            body: nil
         )
     }
 
@@ -65,14 +73,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        DataResponse(
-            try await URLSession.shared.data(
-                for: request(
-                    for: url,
-                    method: .OPTIONS,
-                    headerFields: headerFields
-                )
-            )
+        try await request(
+            for: url,
+            method: .OPTIONS,
+            headerFields: headerFields,
+            body: nil
         )
     }
 
@@ -83,14 +88,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        DataResponse(
-            try await URLSession.shared.data(
-                for: request(
-                    for: url,
-                    method: .TRACE,
-                    headerFields: headerFields
-                )
-            )
+        try await request(
+            for: url,
+            method: .TRACE,
+            headerFields: headerFields,
+            body: nil
         )
     }
 
@@ -102,18 +104,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        var request = request(
+        try await request(
             for: url,
             method: .POST,
-            headerFields: headerFields
-        )
-
-        request.httpBody = body
-
-        return DataResponse(
-            try await URLSession.shared.data(
-                for: request
-            )
+            headerFields: headerFields,
+            body: body
         )
     }
 
@@ -125,18 +120,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        var request = request(
+        try await request(
             for: url,
             method: .PUT,
-            headerFields: headerFields
-        )
-
-        request.httpBody = body
-
-        return DataResponse(
-            try await URLSession.shared.data(
-                for: request
-            )
+            headerFields: headerFields,
+            body: body
         )
     }
 
@@ -148,18 +136,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        var request = request(
+        try await request(
             for: url,
             method: .PATCH,
-            headerFields: headerFields
-        )
-
-        request.httpBody = body
-
-        return DataResponse(
-            try await URLSession.shared.data(
-                for: request
-            )
+            headerFields: headerFields,
+            body: body
         )
     }
 
@@ -171,31 +152,11 @@ open class Network: Networking {
             "Accept": "application/json"
         ]
     ) async throws -> DataResponse {
-        var request = request(
+        try await request(
             for: url,
             method: .DELETE,
-            headerFields: headerFields
+            headerFields: headerFields,
+            body: body
         )
-
-        request.httpBody = body
-
-        return DataResponse(
-            try await URLSession.shared.data(
-                for: request
-            )
-        )
-    }
-
-    open func request(
-        for url: URL,
-        method : HTTPRequestMethod,
-        headerFields: [String: String]
-    ) -> URLRequest {
-        var request = URLRequest(url: url)
-
-        request.httpMethod = method.rawValue
-        request.allHTTPHeaderFields = headerFields
-
-        return request
     }
 }
