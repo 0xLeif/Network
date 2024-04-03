@@ -2,7 +2,11 @@ import Foundation
 
 /// A class that implements the `Networking` protocol to perform network requests using URLSession.
 open class Network: Networking {
-    public init() { }
+    public weak var delegate: URLSessionTaskDelegate?
+
+    public init(delegate: URLSessionTaskDelegate? = nil) {
+        self.delegate = delegate
+    }
 
     open func request(
         for url: URL,
@@ -17,7 +21,10 @@ open class Network: Networking {
         request.httpBody = body
 
         return DataResponse(
-            try await URLSession.shared.data(for: request)
+            try await URLSession.shared.data(
+                for: request,
+                delegate: delegate
+            )
         )
     }
 
